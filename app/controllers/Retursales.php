@@ -55,53 +55,6 @@ class Retursales extends MY_Controller {
         $this->form_validation->set_rules('date', lang('date'), 'required');
 
         if ($this->form_validation->run() == true) {
-            $total = 0;
-            $quantity = "quantity";
-            $product_id = "product_id";
-            $unit_cost = "cost";
-            $i = isset($_POST['product_id']) ? sizeof($_POST['product_id']) : 0;
-            for ($r = 0; $r < $i; $r++) {
-                $item_id = $_POST['product_id'][$r];
-                $item_qty = $_POST['quantity'][$r];
-                $item_cost = $_POST['cost'][$r];
-                if( $item_id && $item_qty && $unit_cost ) {
-
-                    if(!$this->retursales_model->getProductByID($item_id)) {
-                        $this->session->set_flashdata('error', $this->lang->line("product_not_found")." ( ".$item_id." ).");
-                        redirect('retursales/add_retur');
-                    }
-
-                    $products[] = array(
-                        'product_id' => $item_id,
-                        'cost' => $item_cost,
-                        'quantity' => $item_qty,
-                        'subtotal' => ($item_cost*$item_qty)
-                        );
-
-                    $total += ($item_cost * $item_qty);
-
-                }
-            }
-
-            if (!isset($products) || empty($products)) {
-                $this->form_validation->set_rules('product', lang("order_items"), 'required');
-            } else {
-                krsort($products);
-            }
-
-            $data = array(
-                'date' => $this->input->post('date'),
-                'no_retur' => $this->input->post('no_retur'),
-                'exno_transaksi' => $this->input->post('exno_transaksi'),
-                'customer_id' => $this->input->post('customer_id'),
-                'total' => $total,
-                'created_by' => $this->session->userdata('user_id'),
-                'store_id' => $this->session->userdata('store_id'),
-            );
-            // $this->izi->print_arrays($data, $products);
-        }
-
-        if ($this->form_validation->run() == true && $this->retursales_model->addRetursales($data, $products)) {
 
             $this->session->set_userdata('remove_spo', 1);
             $this->session->set_flashdata('message', lang('retursales_added'));
@@ -112,6 +65,7 @@ class Retursales extends MY_Controller {
             $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
             $this->data['customers'] = $this->site->getAllCustomers();
             $this->data['no_transaksis'] = $this->site->getAllTransaksi();
+            $this->data['sale_item'] = $this->site->getAllSaleitems();
             $this->data['no_retur'] = $this->retursales_model->getNomorretur();
             $this->data['page_title'] = lang('add_retursales');
             $bc = array(array('link' => site_url('products'), 'page' => lang('products')), array('link' => '#', 'page' => lang('add_product')));
@@ -119,6 +73,24 @@ class Retursales extends MY_Controller {
             $this->page_construct('retursales/add_retur', $this->data, $meta);
 
         }
+    }
+
+    function save_retur()
+    {
+        print('Testing..');
+        $date = $this->input->post('date');
+        $no_retur = $this->input->post('no_retur');
+        $customer_id = $this->input->post('customer_id');
+        $exno_transaksi = $this->input->post('exno_transaksi');
+		$data = array(
+            'date' => $date,
+            'no_retur' => $no_retur,
+            'customer_id' => $customer_id,
+            'exno_transaksi'=>$exno_transaksi
+        );
+        var_dump($data);
+        exit;
+        $this->retursales_model->add_retursalesmaster('tbl_retursales', $data);
     }
 
     function load_saleitems()
@@ -131,7 +103,8 @@ class Retursales extends MY_Controller {
                 <td><?php echo $row->real_unit_price ?></td>
                 <td><?php echo $row->quantity ?></td>
                 <td><?= form_input('no_retur', set_value('no_retur', '0'), 'class="form-control tip" id="no_retur" required="required"'); ?></td>
-                <td><?php echo $row->subtotal ?></td>
+                <td><?= form_input('no_retur', set_value('no_retur', $row->subtotal), 'class="form-control tip" id="no_retur" required="required"'); ?></td>
+                <td align="center"><?= form_submit('add_retur', 'Retur', 'class="btn btn-success"'); ?></td>
             </tr>
         <?php endforeach ?> <?php
     }

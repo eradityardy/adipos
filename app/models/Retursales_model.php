@@ -7,6 +7,11 @@ class Retursales_model extends CI_Model
         parent::__construct();
     }
 
+    function add_retursalesmaster($table, $data)
+    {
+		$this->db->insert($table, $data);
+    }
+
     public function getProductByID($id) {
         $q = $this->db->get_where('products', array('id' => $id), 1);
         if( $q->num_rows() > 0 ) {
