@@ -7,9 +7,29 @@ class Retursales_model extends CI_Model
         parent::__construct();
     }
 
-    function add_retursalesmaster($table, $data)
+    public function add_retursalesmaster($data)
     {
-		$this->db->insert($table, $data);
+		$this->db->insert('retursales', $data);
+    }
+
+    public function add_retursalesdetail($data)
+    {
+		$this->db->insert('retursales_items', $data);
+    }
+
+    public function getNoretur()
+    {
+		$query = $this->db->query("SELECT * FROM tbl_retursales_items ORDER BY id DESC");
+        $row = $query->row();
+        return $row->retursales_id;
+    }
+
+    public function show_retur_detail($retursales_id = 0)
+    {
+        $this->db->select('*');
+        $this->db->from('retursales_items');
+        $this->db->where('retursales_id = ',$retursales_id);
+        return $query=$this->db->get();
     }
 
     public function getProductByID($id) {
@@ -20,20 +40,20 @@ class Retursales_model extends CI_Model
         return FALSE;
     }
 
-    public function getPurchaseByID($id) {
-        $q = $this->db->get_where('purchases', array('id' => $id), 1);
+    public function getRetursalesByID($id) {
+        $q = $this->db->get_where('retursales', array('id' => $id), 1);
         if( $q->num_rows() > 0 ) {
             return $q->row();
         }
         return FALSE;
     }
 
-    public function getAllPurchaseItems($purchase_id) {
-        $this->db->select('purchase_items.*, products.code as product_code, products.name as product_name')
-            ->join('products', 'products.id=purchase_items.product_id', 'left')
-            ->group_by('purchase_items.id')
+    public function getAllRetursalesItems($retursales_id) {
+        $this->db->select('retursales_items.*, products.code as product_code, products.name as product_name')
+            ->join('products', 'products.id=retursales_items.product_id', 'left')
+            ->group_by('retursales_items.id')
             ->order_by('id', 'asc');
-        $q = $this->db->get_where('purchase_items', array('purchase_id' => $purchase_id));
+        $q = $this->db->get_where('retursales_items', array('retursales_id' => $retursales_id));
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
                 $data[] = $row;

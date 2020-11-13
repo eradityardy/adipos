@@ -72,6 +72,17 @@ class Site extends CI_Model
         return FALSE;
     }
 
+    public function getAllSaleitems() {
+        $q = $this->db->get('sale_items');
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return FALSE;
+    }
+
     public function getAllUsers() {
         $this->db->select("{$this->db->dbprefix('users')}.id as id, username, first_name, last_name, {$this->db->dbprefix('users')}.email, company, {$this->db->dbprefix('groups')}.name as group, active, {$this->db->dbprefix('stores')}.name as store")
             ->join('groups', 'users.group_id=groups.id', 'left')

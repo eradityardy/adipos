@@ -34,7 +34,7 @@
             "columns": [
             { "data": "id", "visible": false },
             { "data": "date", "render": hrld },
-            { "data": "customer_id" },
+            { "data": "customer_name" },
             { "data": "no_retur" },
             { "data": "exno_transaksi" },
             { "data": "Actions", "searchable": false, "orderable": false }
@@ -93,7 +93,7 @@
                                 <tr class="active">
                                     <th style="max-width:30px;"><input type="text" class="text_filter" placeholder="[<?= lang('id'); ?>]"></th>
                                     <th class="col-sm-2"><span class="datepickercon"><input type="text" class="text_filter datepicker" placeholder="[<?= lang('date'); ?>]"></span></th>
-                                    <th class="col-sm-2"><input type="text" class="text_filter" placeholder="[<?= lang('customer'); ?>]"></th>
+                                    <th class="col-sm-2"><?= lang("customer"); ?></th>
                                     <th class="col-sm-1"><?= lang("no_retur"); ?></th>
                                     <th class="col-sm-1"><?= lang("exno_transaksi"); ?></th>
                                     <th class="col-sm-1"><?= lang("actions"); ?></th>
